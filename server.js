@@ -22,7 +22,6 @@ app.use(cors());
 // Middleware to parse JSON formatted body
 app.use(bodyParser.json());
 
-
 const ARGS = [
   '-v', 'ERRORS_AND_PROGRESS',               // (Verbose)                                   ERRORS_AND_PROGRESS | ERRORS
   '-close', 'DO_NOT_CLOSE',                  // (onClose)                                   DO_NOT_SAVE_CHANGES | SAVE_CHANGES | DO_NOT_CLOSE
@@ -46,6 +45,8 @@ const ARGS = [
 ];
 
 app.post('/action', async (req, res) => {
+    console.log('REQUEST RECEIVED');
+
     const { type, payload } = req.body;
 
     const templatePath = path.join(__dirname, 'templates', `${'base'}.hbs`);
@@ -59,18 +60,11 @@ app.post('/action', async (req, res) => {
 
     await fsp.access(process.env.SCRIPT_PATH, fs.constants.F_OK);  // F_OK checks the file for visibility (existence)
     
-    // exec(`pwd ; "${process.env.AE_BINARY}" ${ARGS.join(' ')}`, 
-    //   { cwd: './ae', windowsHide: true }, 
-    //   (error, stdout, stderr) => { console.log('AE DONE') },
-    // )
     const { stdout, stderr } = await exec(`"${process.env.AE_BINARY}" ${ARGS.join(' ')}`,
         { cwd: './ae', windowsHide: true }
     );
 
-    console.log('stdout: ', stdout)
-    console.log('stderr: ', stderr)
-    
-    console.log('CONTINUING')
+    console.log('AE FINISHED');
     
     res.status(200).json({
         success: true,
