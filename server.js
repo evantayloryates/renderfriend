@@ -44,19 +44,27 @@ const ARGS = [
   '-r',              `${process.env.SCRIPT_PATH}`,
 ];
 
+const registerSharedPartial = (name) => {
+    const partialPath = path.join(__dirname, 'templates', 'shared', `${name}.hbs`);
+    const partialContent = fs.readFileSync(partialPath, 'utf-8');
+    handlebars.registerPartial(`shared/${name}`, partialContent);
+}
+
+// Register Partials
+registerSharedPartial('polyfills');
+registerSharedPartial('clear-queue');
+
+// Generate Handlebar Compile Function
+const templatePath = path.join(__dirname, 'templates', `${'base'}.hbs`);
+const templateContent = fs.readFileSync(templatePath, 'utf-8');
+const compile = handlebars.compile(templateContent);
+
 app.post('/action', async (req, res) => {
     console.log('REQUEST RECEIVED');
 
     const { type, payload } = req.body;
-
-    const partialPath = path.join(__dirname, 'templates', 'shared', 'polyfills.hbs');
-    const partialContent = fs.readFileSync(partialPath, 'utf-8');
-    handlebars.registerPartial('shared/polyfills', partialContent);
     
-    const templatePath = path.join(__dirname, 'templates', `${'base'}.hbs`);
-    const templateContent = fs.readFileSync(templatePath, 'utf-8');
-    const compiledTemplate = handlebars.compile(templateContent);
-    const outputJSX = compiledTemplate();
+    const outputJSX = compile();
 
     await fsp.writeFile(process.env.SCRIPT_PATH, outputJSX);
 

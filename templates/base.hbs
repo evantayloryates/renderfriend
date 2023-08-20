@@ -1,14 +1,8 @@
 {{> shared/polyfills}}
 
 (function() {
-  var project = app.project;
-  var rq = project.renderQueue;
-
-  if (rq.numItems > 0) {
-    for (var i = rq.numItems; i >= 1; i--) {
-      var rqi = rq.item(i).remove();
-    }
-  } 
+  
+  {{> shared/clear-queue}} 
   
 })();
 
