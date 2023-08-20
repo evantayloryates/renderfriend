@@ -4,15 +4,12 @@
   var project = app.project;
   var rq = project.renderQueue;
 
-  // Check if render queue is not empty
   if (rq.numItems > 0) {
     for (var i = rq.numItems; i >= 1; i--) {
-      var rqi = rq.item(i);
-      if (rqi.comp.name == "{{compName}}") {
-          rqi.remove();
-      }
+      var rqi = rq.item(i).remove();
     }
-  }
+  } 
+  
 })();
 
 },{}]},{},[1]);
