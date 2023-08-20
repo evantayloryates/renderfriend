@@ -1,6 +1,14 @@
 const express = require('express');
+const handlebars = require('handlebars');
+const fs = require('fs');
+const fsp = fs.promises;
+const path = require('path');
+
 const bodyParser = require('body-parser');
-const { exec, spawn } = require('child_process');
+
+const util = require('util');
+const exec = util.promisify(require('child_process').exec);
+
 const dotenv = require('dotenv');
 
 dotenv.config();
@@ -33,59 +41,36 @@ const ARGS = [
   // '-teamproject',    'teamProject1',
   // '-project',        'project.aep',
   '-reuse', 
-  '-r',              '/Users/taylor/src/github/aenode/script.jsx',
+  '-r',              `${process.env.SCRIPT_PATH}`,
 ];
 
-app.post('/action', (req, res) => {
-    console.log('req.body: ', req.body)
+app.post('/action', async (req, res) => {
+    console.log('REQUEST RECEIVED');
+
     const { type, payload } = req.body;
 
-    // switch(type) {
-    //   case 'COMP_ADD':
-    //     addComp(payload);
-    //     break;
-    //   case y:
-    //     // code block
-    //     break;
-    //   default:
-    //     // code block
-    // }
+    const templatePath = path.join(__dirname, 'templates', `${'base'}.hbs`);
+    const templateContent = fs.readFileSync(templatePath, 'utf-8');
+    const compiledTemplate = handlebars.compile(templateContent);
+    const outputJSX = compiledTemplate({
+        compName: 'norender'
+    });
+
+    await fsp.writeFile(process.env.SCRIPT_PATH, outputJSX);
+
+    await fsp.access(process.env.SCRIPT_PATH, fs.constants.F_OK);  // F_OK checks the file for visibility (existence)
     
-    // Check if the required keys are present
-    // if (typeof type === 'string' && typeof payload === 'string') {
-    if (typeof type === 'string') {
-        exec(`pwd ; "${process.env.AE_BINARY}" ${ARGS.join(' ')}`, { 
-          cwd: './ae',
-          windowsHide: true,
-        }, (error, stdout, stderr) => {
-        // exec(`echo $PATH | tr ':' '\n'`, (error, stdout, stderr) => {
-          if (error) {
-              console.error(`exec error: ${error}`);
-              console.error(`Standard Output: ${stdout}`);
-              console.error(`Standard Error Output: ${stderr}`);
+    const { stdout, stderr } = await exec(`"${process.env.AE_BINARY}" ${ARGS.join(' ')}`,
+        { cwd: './ae', windowsHide: true }
+    );
 
-              return res.status(500).json({
-                  success: false,
-                  message: "Error executing the system command."
-              });
-          }
-          
-          // You can use stdout to capture the command output if needed
-          console.log(`Command Output: ${stdout}`);
-          
-          res.status(200).json({
-              success: true,
-              message: "Data received successfully and system command executed.",
-              data: { type, payload }
-          });
-      });
-
-    } else {
-        res.status(400).json({
-            success: false,
-            message: "Invalid data format. Expected keys: type (string) and payload (string)."
-        });
-    }
+    console.log('AE FINISHED');
+    
+    res.status(200).json({
+        success: true,
+        message: "Data received successfully and system command executed.",
+        data: { type, payload }
+    });
 });
 
 app.listen(PORT, () => {
