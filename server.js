@@ -49,11 +49,16 @@ app.post('/action', async (req, res) => {
 
     const { type, payload } = req.body;
 
+    const partialPath = path.join(__dirname, 'templates', 'shared', 'polyfills.hbs');
+    const partialContent = fs.readFileSync(partialPath, 'utf-8');
+    handlebars.registerPartial('shared/polyfills', partialContent);
+    
     const templatePath = path.join(__dirname, 'templates', `${'base'}.hbs`);
     const templateContent = fs.readFileSync(templatePath, 'utf-8');
     const compiledTemplate = handlebars.compile(templateContent);
     const outputJSX = compiledTemplate({
-        compName: 'norender'
+        compName: 'norender',
+        commentValue: 'HIIIII', 
     });
 
     await fsp.writeFile(process.env.SCRIPT_PATH, outputJSX);
