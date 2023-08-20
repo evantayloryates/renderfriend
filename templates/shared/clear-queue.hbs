@@ -1,0 +1,8 @@
+var project = app.project;
+var rq = project.renderQueue;
+
+if (rq.numItems > 0) {
+  for (var i = rq.numItems; i >= 1; i--) {
+    rq.item(i).remove();
+  }
+}

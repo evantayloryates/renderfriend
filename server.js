@@ -52,6 +52,10 @@ app.post('/action', async (req, res) => {
     const partialPath = path.join(__dirname, 'templates', 'shared', 'polyfills.hbs');
     const partialContent = fs.readFileSync(partialPath, 'utf-8');
     handlebars.registerPartial('shared/polyfills', partialContent);
+
+    const partialPath2 = path.join(__dirname, 'templates', 'shared', 'clear-queue.hbs');
+    const partialContent2 = fs.readFileSync(partialPath2, 'utf-8');
+    handlebars.registerPartial('shared/clear-queue', partialContent2);
     
     const templatePath = path.join(__dirname, 'templates', `${'base'}.hbs`);
     const templateContent = fs.readFileSync(templatePath, 'utf-8');
