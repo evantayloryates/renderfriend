@@ -1,0 +1,7 @@
+.env
+node_modules/
+ae/log.txt
+ae/outputVideo.*
+ae/project.aep Logs/
+
+.DS_Store
