@@ -3,5 +3,6 @@ node_modules/
 ae/log.txt
 ae/outputVideo.*
 ae/project.aep Logs/
+ae/script.jsx
 
 .DS_Store
