@@ -37,7 +37,7 @@ const ARGS = [
   // '-renderSettings', 'Taylor Settings',
   '-RStemplate',     '"Taylor Settings"',
   // '-rqindex',        '1',
-  '-comp',           'norender',
+  '-comp',           'FAKECOMP', // Intentionally target a non-existent comp to avoid any rendering 
   // '-teamproject',    'teamProject1',
   // '-project',        'project.aep',
   '-reuse', 
@@ -56,18 +56,18 @@ app.post('/action', async (req, res) => {
     const templatePath = path.join(__dirname, 'templates', `${'base'}.hbs`);
     const templateContent = fs.readFileSync(templatePath, 'utf-8');
     const compiledTemplate = handlebars.compile(templateContent);
-    const outputJSX = compiledTemplate({
-        compName: 'norender',
-        commentValue: 'HIIIII', 
-    });
+    const outputJSX = compiledTemplate();
 
     await fsp.writeFile(process.env.SCRIPT_PATH, outputJSX);
 
-    await fsp.access(process.env.SCRIPT_PATH, fs.constants.F_OK);  // F_OK checks the file for visibility (existence)
-    
-    const { stdout, stderr } = await exec(`"${process.env.AE_BINARY}" ${ARGS.join(' ')}`,
-        { cwd: './ae', windowsHide: true }
-    );
+    await fsp.access(process.env.SCRIPT_PATH, fs.constants.F_OK);
+
+    try {
+        await exec(`"${process.env.AE_BINARY}" ${ARGS.join(' ')}`, 
+            { cwd: './ae', windowsHide: true }
+        );
+    // For now, job will error every time        
+    } catch (error) { }
 
     console.log('AE FINISHED');
     
