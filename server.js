@@ -53,6 +53,7 @@ const registerSharedPartial = (name) => {
 // Register Partials
 registerSharedPartial('polyfills');
 registerSharedPartial('clear-queue');
+registerSharedPartial('save-project');
 
 // Generate Handlebar Compile Function
 const templatePath = path.join(__dirname, 'templates', `${'base'}.hbs`);
