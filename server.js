@@ -109,7 +109,7 @@ app.post('/action', async (req, res) => {
     await fsp.writeFile(process.env.SCRIPT_PATH, outputJSX);
     await fsp.access(process.env.SCRIPT_PATH, fs.constants.F_OK);
 
-
+    await render();
 
     console.log('AE FINISHED');
     
