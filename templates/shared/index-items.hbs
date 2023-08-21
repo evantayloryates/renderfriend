@@ -1,0 +1,52 @@
+{{!-- 
+
+CompItem:          Represents a composition. You can use properties and methods like numLayers, duration, layers, etc., with a CompItem.
+FootageItem:       Represents footage. This can be still images, sequences, audio files, movies, etc. They have properties like file, duration, hasAudio, among others.
+FolderItem:        Represents a folder. You can think of this as a container for organizing other items in the Project panel. It has properties like numItems and methods like item(index) to access its children.
+AVLayer:           Represents audio or video layers within a composition. This includes text layers, shape layers, cameras, lights, etc. But when you're iterating over items in the Project panel, you won't directly encounter AVLayer objects; you'll interact with them within a CompItem.
+CameraLayer:       Represents a camera layer in a composition.
+LightLayer:        Represents a light layer in a composition.
+ShapeLayer:        Represents a shape layer in a composition.
+TextLayer:         Represents a text layer in a composition.
+SolidSource:       Represents a solid color source.
+MaskPropertyGroup: Represents a mask on a layer.
+Effect:            Represents an effect applied to a layer.
+
+--}}
+
+var LAYERS = {};
+var COMPOSITIONS = {};
+var FOLDERS = {};
+var FOOTAGES = {};
+
+function get(mapping, name) { return mapping[name] };
+
+function getLayer(name) { return get(LAYERS, name) };
+function getComposition(name) { return get(COMPOSITIONS, name) };
+function getFolder(name) { return get(FOLDERS, name) };
+function getFootage(name) { return get(FOOTAGES, name) };
+
+function processLayers(comp) {
+  for (var j = 1; j <= comp.numLayers; j++) {
+    var layer = comp.layer(j);
+    LAYERS[layer.name] = layer;
+  }
+}
+
+for (var j = 1; j <= app.project.numItems; j++) {
+    var item = app.project.item(j);
+    if (item instanceof Layer) { 
+      throw new Error("LAYER FOUND: " + item.toString() + " / " + item.name);
+      LAYERS[item.name] = item 
+    }
+    else if (item instanceof CompItem) { 
+      COMPOSITIONS[item.name] = item
+      processLayers(item);
+    }
+    else if (item instanceof FolderItem) { FOLDERS[item.name] = item }
+    else if (item instanceof FootageItem) { FOOTAGES[item.name] = item }
+    else {
+      throw new Error("TYPE MISSING: " + item.toString());
+    }
+
+}
