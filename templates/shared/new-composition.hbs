@@ -1,0 +1,35 @@
+var compName = "{{composition.name}}";
+var compWidth = {{composition.width}};
+var compHeight = {{composition.height}};
+var compPixelAspect = {{composition.pixelAspect}};
+var compDuration = {{composition.duration}};
+var compFrameRate = {{composition.frameRate}};
+var folderName = "Compositions";
+{{#if composition.parentCompName}}
+var parentCompName = "{{composition.parentCompName}}";
+{{else}}
+var parentCompName = null;
+{{/if}}
+
+var compFolder = null;
+for (var i = 1; i <= app.project.numItems; i++) {
+    if (app.project.item(i) instanceof FolderItem && app.project.item(i).name === folderName) {
+        compFolder = app.project.item(i);
+        break;
+    }
+}
+
+var newComp = app.project.items.addComp(compName, compWidth, compHeight, compPixelAspect, compDuration, compFrameRate)
+
+newComp.parentFolder = compFolder;
+
+if (parentCompName) {
+  var parentComp;
+  for (var j = 1; j <= app.project.numItems; j++) {
+      if (app.project.item(j) instanceof CompItem && app.project.item(j).name === parentCompName) {
+          parentComp = app.project.item(j);
+          break;
+      }
+  }
+  parentComp.layers.add(newComp);
+}
