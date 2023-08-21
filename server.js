@@ -55,6 +55,7 @@ registerSharedPartial('polyfills');
 registerSharedPartial('clear-queue');
 registerSharedPartial('save-project');
 registerSharedPartial('new-composition');
+registerSharedPartial('index-items');
 
 // Generate Handlebar Compile Function
 const templatePath = path.join(__dirname, 'templates', `${'base'}.hbs`);
