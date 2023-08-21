@@ -35,18 +35,12 @@ function processLayers(comp) {
 
 for (var j = 1; j <= app.project.numItems; j++) {
     var item = app.project.item(j);
-    if (item instanceof Layer) { 
-      throw new Error("LAYER FOUND: " + item.toString() + " / " + item.name);
-      LAYERS[item.name] = item 
-    }
-    else if (item instanceof CompItem) { 
+
+    if (item instanceof CompItem) { 
       COMPOSITIONS[item.name] = item
       processLayers(item);
     }
+    else if (item instanceof Layer) { LAYERS[item.name] = item }
     else if (item instanceof FolderItem) { FOLDERS[item.name] = item }
     else if (item instanceof FootageItem) { FOOTAGES[item.name] = item }
-    else {
-      throw new Error("TYPE MISSING: " + item.toString());
-    }
-
 }
