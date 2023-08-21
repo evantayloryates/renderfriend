@@ -1,0 +1,67 @@
+
+{{!-- 
+TODO: Serialize these non-primitave values
+(COMP)   layers          LayerCollection
+(COMP)   markerProperty  PropertyGroup<MarkerValue>
+(AVITEM) proxySource     FootageSource
+(AVITEM) usedIn          CompItem[]
+(ITEM)   guides          guide[]       
+ --}}
+function serializeComposition(comp) {
+ 
+  var compData =  {
+    bgColor: comp.bgColor,                                                             // CompItem
+    comment: comp.comment,                                                             // Item
+    displayStartFrame: comp.displayStartFrame,                                         // CompItem
+    displayStartTime: comp.displayStartTime,                                           // CompItem
+    draft3d: comp.draft3d,                                                             // CompItem
+    dropFrame: comp.dropFrame,                                                         // CompItem
+    duration: comp.duration,                                                           // AVItem
+    dynamicLinkGUID: comp.dynamicLinkGUID,                                             // Item
+    footageMissing: comp.footageMissing,                                               // AVItem
+    frameBlending: comp.frameBlending,                                                 // CompItem
+    frameDuration: comp.frameDuration,                                                 // AVItem
+    frameDuration: comp.frameDuration,                                                 // CompItem
+    frameRate: comp.frameRate,                                                         // AVItem
+    hasAudio: comp.hasAudio,                                                           // AVItem
+    hasVideo: comp.hasVideo,                                                           // AVItem
+    height: comp.height,                                                               // AVItem
+    hideShyLayers: comp.hideShyLayers,                                                 // CompItem
+    id: comp.id,                                                                       // Item
+    isMediaReplacementCompatible: comp.isMediaReplacementCompatible,                   // AVItem
+    label: comp.label,                                                                 // Item
+    layers: comp.layers,                                                               // CompItem
+    motionBlur: comp.motionBlur,                                                       // CompItem
+    motionBlurAdaptiveSampleLimit: comp.motionBlurAdaptiveSampleLimit,                 // CompItem
+    motionBlurSamplesPerFrame: comp.motionBlurSamplesPerFrame,                         // CompItem
+    motionGraphicsTemplateControllerCount: comp.motionGraphicsTemplateControllerCount, // CompItem
+    motionGraphicsTemplateName: comp.motionGraphicsTemplateName,                       // CompItem
+    name: comp.name,                                                                   // AVItem
+    numLayers: comp.numLayers,                                                         // CompItem
+    parentFolder: comp.parentFolder,                                                   // Item
+    pixelAspect: comp.pixelAspect,                                                     // AVItem
+    preserveNestedFrameRate: comp.preserveNestedFrameRate,                             // CompItem
+    preserveNestedResolution: comp.preserveNestedResolution,                           // CompItem
+    renderer: comp.renderer,                                                           // CompItem
+    renderers: comp.renderers,                                                         // CompItem
+    resolutionFactor: comp.resolutionFactor,                                           // CompItem
+    selected: comp.selected,                                                           // Item
+    shutterAngle: comp.shutterAngle,                                                   // CompItem
+    shutterPhase: comp.shutterPhase,                                                   // CompItem
+    time: comp.time,                                                                   // AVItem
+    typeName: comp.typeName,                                                           // Item
+    useProxy: comp.useProxy,                                                           // AVItem
+    width: comp.width,                                                                 // AVItem
+    workAreaDuration: comp.workAreaDuration,                                           // CompItem
+    workAreaStart: comp.workAreaStart,                                                 // CompItem    
+  };
+
+  return JSON.stringify(compData);
+}
+
+var serializedComp = serializeComposition(getComposition('root'));
+
+const file = new File("/Users/taylor/src/github/aenode/ae/data/{{requestId}}.json")
+file.open("w");
+file.write(serializedComp);
+file.close();
