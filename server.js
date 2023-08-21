@@ -3,6 +3,7 @@ const handlebars = require('handlebars');
 const fs = require('fs');
 const fsp = fs.promises;
 const path = require('path');
+const { v4: uuidv4 } = require('uuid');
 
 const bodyParser = require('body-parser');
 
@@ -44,6 +45,15 @@ const ARGS = [
   '-r',              `${process.env.SCRIPT_PATH}`,
 ];
 
+const render = async () => {
+    try {
+        await exec(`"${process.env.AE_BINARY}" ${ARGS.join(' ')}`, 
+            { cwd: './ae', windowsHide: true }
+        );
+    // For now, job will error every time        
+    } catch (error) { }
+}
+
 const registerSharedPartial = (name) => {
     const partialPath = path.join(__dirname, 'templates', 'shared', `${name}.hbs`);
     const partialContent = fs.readFileSync(partialPath, 'utf-8');
@@ -56,6 +66,22 @@ registerSharedPartial('clear-queue');
 registerSharedPartial('save-project');
 registerSharedPartial('new-composition');
 registerSharedPartial('index-items');
+registerSharedPartial('data-in');
+registerSharedPartial('data-out');
+
+handlebars.registerHelper('partial', function(name) {
+    var partial = handlebars.partials[name];
+    if (!partial) {
+      return new handlebars.SafeString("console.log('Partial not found');\n");
+    }
+    
+    // if it's been precompiled, it may be a function already
+    if (typeof partial !== 'function') {
+      partial = handlebars.compile(partial);
+    }
+    
+    return new handlebars.SafeString(partial(this));
+  });
 
 // Generate Handlebar Compile Function
 const templatePath = path.join(__dirname, 'templates', `${'base'}.hbs`);
@@ -78,18 +104,12 @@ app.post('/action', async (req, res) => {
 
     const outputJSX = compile({
         composition,
+        requestPartial: 'shared/data-in',
     });
-
     await fsp.writeFile(process.env.SCRIPT_PATH, outputJSX);
-
     await fsp.access(process.env.SCRIPT_PATH, fs.constants.F_OK);
 
-    try {
-        await exec(`"${process.env.AE_BINARY}" ${ARGS.join(' ')}`, 
-            { cwd: './ae', windowsHide: true }
-        );
-    // For now, job will error every time        
-    } catch (error) { }
+    await render();
 
     console.log('AE FINISHED');
     
@@ -97,6 +117,30 @@ app.post('/action', async (req, res) => {
         success: true,
         message: "Data received successfully and system command executed.",
         data: { type, payload }
+    });
+});
+
+app.get('/action', async (req, res) => {
+    const requestId = `${Date.now()}__${uuidv4()}`;
+
+    const outputJSX = compile({
+        requestPartial: 'shared/data-out',
+        requestId,
+    });
+    await fsp.writeFile(process.env.SCRIPT_PATH, outputJSX);
+    await fsp.access(process.env.SCRIPT_PATH, fs.constants.F_OK);
+
+    await render();
+
+    await fsp.access(`${process.env.DATA_PATH}/${requestId}.json`, fs.constants.F_OK);
+
+    const jsonStr = await fsp.readFile(`${process.env.DATA_PATH}/${requestId}.json`, 'utf8');
+    const data = JSON.parse(jsonStr);
+
+    res.status(200).json({
+        success: true,
+        message: "Data received successfully and system command executed.",
+        data
     });
 });
 
