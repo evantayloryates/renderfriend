@@ -54,6 +54,7 @@ const registerSharedPartial = (name) => {
 registerSharedPartial('polyfills');
 registerSharedPartial('clear-queue');
 registerSharedPartial('save-project');
+registerSharedPartial('new-composition');
 
 // Generate Handlebar Compile Function
 const templatePath = path.join(__dirname, 'templates', `${'base'}.hbs`);
@@ -65,7 +66,18 @@ app.post('/action', async (req, res) => {
 
     const { type, payload } = req.body;
     
-    const outputJSX = compile();
+    const composition = {
+        name: 'NOPARENT',
+        width: 1920,
+        height: 1080,
+        pixelAspect: 1,
+        duration: 10,
+        frameRate: 30,
+    }
+
+    const outputJSX = compile({
+        composition,
+    });
 
     await fsp.writeFile(process.env.SCRIPT_PATH, outputJSX);
 
