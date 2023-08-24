@@ -5,11 +5,11 @@ const prisma = new PrismaClient();
 async function main() {
 
   const newUser = {
-    username: 'seeded_user',
-    email: 'seeded@example.com',
-    firstName: 'Seeded',
-    lastName: 'User',
-    preferredName: 'Seedling',
+    username: 'taylor',
+    email: 'taylor@nkeylabs.com',
+    firstName: 'Evan',
+    lastName: 'Yates',
+    preferredName: 'Taylor',
     phone: {
       create: {
         countryCode: '+1',
