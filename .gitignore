@@ -2,3 +2,6 @@
 node_modules/
 ae/
 .DS_Store
+prisma/generated
+prisma/data.db
+prisma/data.db-journal
