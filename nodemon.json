@@ -1,3 +1,5 @@
 {
-  "ext": "js,hbs"
+  "watch": ["src"],
+  "ext": "ts,js,hbs",
+  "exec": "ts-node src/server.ts"
 }

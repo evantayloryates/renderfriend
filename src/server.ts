@@ -1,5 +1,5 @@
-const express = require('express');
-const handlebars = require('handlebars');
+import express, { Request, Response } from 'express';
+import handlebars, { RuntimeOptions } from 'handlebars';
 const fs = require('fs');
 const fsp = fs.promises;
 const path = require('path');
@@ -54,7 +54,7 @@ const render = async () => {
     } catch (error) { }
 }
 
-const registerSharedPartial = (name) => {
+const registerSharedPartial = (name: string) => {
     const partialPath = path.join(__dirname, 'templates', 'shared', `${name}.hbs`);
     const partialContent = fs.readFileSync(partialPath, 'utf-8');
     handlebars.registerPartial(`shared/${name}`, partialContent);
@@ -69,7 +69,7 @@ registerSharedPartial('index-items');
 registerSharedPartial('data-in');
 registerSharedPartial('data-out');
 
-handlebars.registerHelper('partial', function(name) {
+handlebars.registerHelper('partial', function(this: RuntimeOptions, name: string) {
     var partial = handlebars.partials[name];
     if (!partial) {
       return new handlebars.SafeString("console.log('Partial not found');\n");
