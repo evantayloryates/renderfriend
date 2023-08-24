@@ -1,6 +1,8 @@
 ### Component Ideas
 * Streaming Picture in Picture (streamer pictured in th bottom corner of video)
 * Blurring Effect
+* Zoom/Google Meet Interface
+* Facetime Interface
 * Phone Interfaces
   - Text Messages
   - Instagram DMs
