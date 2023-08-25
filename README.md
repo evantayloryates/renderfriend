@@ -18,3 +18,5 @@
 * rotate around vertical/horizontal axis
 * slide in/out (from top/bottom/right/left)
 * opacity fade
+
+![favicon-512](https://github.com/evantayloryates/renderfriend/assets/12351038/f521c0ea-bcb1-4093-a156-08e62d2c4f58)
